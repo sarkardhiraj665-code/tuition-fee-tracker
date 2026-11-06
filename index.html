@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10251c">
+<title>Tuition Fee Tracker</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{color-scheme:dark;--bg:#0c1511;--panel:#17231c;--line:#304238;--muted:#a9b8ae;--green:#16a34a;--text:#f2f7f3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}
+main{max-width:980px;margin:0 auto;padding:18px 0 30px}
+header{display:flex;align-items:center;gap:12px;margin:8px 2px 18px}
+.logo{width:48px;height:48px;border-radius:15px;background:#1c5735;display:grid;place-items:center;font-size:25px}
+h1{font-size:21px;margin:0} .sub{color:var(--muted);font-size:13px;margin-top:3px}
+.summary{display:flex;gap:10px;margin-bottom:14px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;flex:1}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:15px;background:var(--panel)}
+table{border-collapse:separate;border-spacing:0;min-width:790px;width:100%}th,td{padding:9px 5px;text-align:center;border-bottom:1px solid #2b3a31}th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#1b2a21}th:first-child,td:first-child{position:sticky;left:0;background:#1b2a21;text-align:left;padding-left:12px;min-width:112px;font-weight:600}td:first-child{background:var(--panel);font-size:13px}tr:last-child td{border-bottom:0}
+.dot{width:29px;height:29px;border-radius:50%;border:1.5px solid #819087;background:transparent;display:inline-grid;place-items:center;cursor:pointer;padding:0;color:white;font-size:17px;touch-action:manipulation}
+.dot.paid{background:var(--green);border-color:var(--green)}.legend{font-size:12px;color:var(--muted);margin:12px 3px}
+.actions{display:flex;gap:9px;margin-top:15px;flex-wrap:wrap}button.action{border:1px solid var(--line);background:#202e25;color:var(--text);border-radius:12px;padding:11px 14px;font-weight:600}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin:15px 3px}
+dialog{background:#1a2920;color:var(--text);border:1px solid #526357;border-radius:18px;width:min(92vw,360px);padding:20px;box-shadow:0 18px 60px #0009}dialog::backdrop{background:#0009}dialog h2{font-size:18px;margin:0 0 9px}dialog p{color:#c4d0c8;font-size:14px}.dlg-actions{display:flex;gap:8px;margin-top:18px}.dlg-actions button{flex:1;border:0;border-radius:11px;padding:11px;font-weight:700}.cancel{background:#b42318;color:white}.keep{background:#dce8df;color:#142018}
+</style>
+</head>
+<body>
+<main>
+<header><div class="logo">₹</div><div><h1>Tuition Fee Tracker</h1><div class="sub">বার্ষিক টিউশন ফি হিসাব · ২০২৬</div></div></header>
+<section class="summary">
+ <div class="stat"><b id="paidCount">0</b><span>Paid</span></div>
+ <div class="stat"><b id="pendingCount">72</b><span>Pending</span></div>
+ <div class="stat"><b>72</b><span>Total</span></div>
+</section>
+<div class="table-wrap"><table><thead><tr><th>Subject / Month</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="legend">🟢 সবুজ গোল = টাকা দেওয়া হয়েছে · ফাঁকা গোল = বাকি</div>
+<div class="actions"><button class="action" id="reset">সব হিসাব Reset</button><button class="action" id="install" hidden>Install App</button></div>
+<p class="note">তোমার পেমেন্টের চিহ্ন এই ডিভাইসেই সেভ থাকবে। ব্রাউজারের Site data মুছে ফেললে হিসাবও মুছে যেতে পারে।</p>
+</main>
+<dialog id="confirm"><h2>পেমেন্ট Cancel করবে?</h2><p id="confirmText">এই মাসের Paid চিহ্ন সরিয়ে দেওয়া হবে। তুমি কি নিশ্চিত?</p><div class="dlg-actions"><button class="cancel" id="yesCancel">হ্যাঁ, Cancel</button><button class="keep" id="noCancel">না, Paid রাখো</button></div></dialog>
+<dialog id="resetConfirm"><h2>সব হিসাব মুছে ফেলবে?</h2><p>সব ৭২টি ঘর আবার ফাঁকা হয়ে যাবে। এই কাজটি ফিরিয়ে আনা যাবে না।</p><div class="dlg-actions"><button class="cancel" id="yesReset">Reset</button><button class="keep" id="noReset">ফিরে যাও</button></div></dialog>
+<script>
+const subjects=["Bengali","English","Physics","Chemistry","Mathematics","Biology"];
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const KEY="tuition-fee-tracker-2026-v1";
+let paid={}; try{paid=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){paid={}}
+let pendingKey=null;
+const rows=document.getElementById("rows");
+function save(){localStorage.setItem(KEY,JSON.stringify(paid));renderStats()}
+function renderStats(){const n=Object.values(paid).filter(Boolean).length;document.getElementById("paidCount").textContent=n;document.getElementById("pendingCount").textContent=72-n}
+function render(){
+ rows.innerHTML="";
+ subjects.forEach(s=>{const tr=document.createElement("tr");const name=document.createElement("td");name.textContent=s;tr.appendChild(name);
+ months.forEach(m=>{const td=document.createElement("td");const key=s+"-"+m;const b=document.createElement("button");b.className="dot"+(paid[key]?" paid":"");b.type="button";b.setAttribute("aria-label",s+" "+m+(paid[key]?" Paid":" Unpaid"));b.textContent=paid[key]?"✓":"";b.addEventListener("click",()=>{if(paid[key]){pendingKey=key;document.getElementById("confirmText").textContent=s+" — "+m+" মাসের Paid চিহ্ন সরিয়ে দেওয়া হবে। তুমি কি নিশ্চিত?";document.getElementById("confirm").showModal()}else{paid[key]=true;save();render()}});td.appendChild(b);tr.appendChild(td)});rows.appendChild(tr)});
+ renderStats();
+}
+document.getElementById("yesCancel").onclick=()=>{if(pendingKey){paid[pendingKey]=false;save();render();pendingKey=null}document.getElementById("confirm").close()};
+document.getElementById("noCancel").onclick=()=>{pendingKey=null;document.getElementById("confirm").close()};
+document.getElementById("reset").onclick=()=>document.getElementById("resetConfirm").showModal();
+document.getElementById("yesReset").onclick=()=>{paid={};save();render();document.getElementById("resetConfirm").close()};
+document.getElementById("noReset").onclick=()=>document.getElementById("resetConfirm").close();
+render();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+let deferredPrompt;const installBtn=document.getElementById("install");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
+installBtn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.hidden=true});
+</script>
+</body></html>

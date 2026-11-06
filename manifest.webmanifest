@@ -1,0 +1,17 @@
+{
+  "name": "Tuition Fee Tracker",
+  "short_name": "Tuition Fees",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0c1511",
+  "theme_color": "#10251c",
+  "description": "Interactive monthly tuition fee tracker",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
