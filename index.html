@@ -1,67 +1,25 @@
-<!doctype html>
-<html lang="bn">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#10251c">
-<title>Tuition Fee Tracker</title>
-<link rel="manifest" href="manifest.webmanifest">
-<style>
-:root{color-scheme:dark;--bg:#0c1511;--panel:#17231c;--line:#304238;--muted:#a9b8ae;--green:#16a34a;--text:#f2f7f3}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}
-main{max-width:980px;margin:0 auto;padding:18px 0 30px}
-header{display:flex;align-items:center;gap:12px;margin:8px 2px 18px}
-.logo{width:48px;height:48px;border-radius:15px;background:#1c5735;display:grid;place-items:center;font-size:25px}
-h1{font-size:21px;margin:0} .sub{color:var(--muted);font-size:13px;margin-top:3px}
-.summary{display:flex;gap:10px;margin-bottom:14px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;flex:1}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
-.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:15px;background:var(--panel)}
-table{border-collapse:separate;border-spacing:0;min-width:790px;width:100%}th,td{padding:9px 5px;text-align:center;border-bottom:1px solid #2b3a31}th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#1b2a21}th:first-child,td:first-child{position:sticky;left:0;background:#1b2a21;text-align:left;padding-left:12px;min-width:112px;font-weight:600}td:first-child{background:var(--panel);font-size:13px}tr:last-child td{border-bottom:0}
-.dot{width:29px;height:29px;border-radius:50%;border:1.5px solid #819087;background:transparent;display:inline-grid;place-items:center;cursor:pointer;padding:0;color:white;font-size:17px;touch-action:manipulation}
-.dot.paid{background:var(--green);border-color:var(--green)}.legend{font-size:12px;color:var(--muted);margin:12px 3px}
-.actions{display:flex;gap:9px;margin-top:15px;flex-wrap:wrap}button.action{border:1px solid var(--line);background:#202e25;color:var(--text);border-radius:12px;padding:11px 14px;font-weight:600}
-.note{font-size:12px;color:var(--muted);line-height:1.5;margin:15px 3px}
-dialog{background:#1a2920;color:var(--text);border:1px solid #526357;border-radius:18px;width:min(92vw,360px);padding:20px;box-shadow:0 18px 60px #0009}dialog::backdrop{background:#0009}dialog h2{font-size:18px;margin:0 0 9px}dialog p{color:#c4d0c8;font-size:14px}.dlg-actions{display:flex;gap:8px;margin-top:18px}.dlg-actions button{flex:1;border:0;border-radius:11px;padding:11px;font-weight:700}.cancel{background:#b42318;color:white}.keep{background:#dce8df;color:#142018}
-</style>
-</head>
-<body>
-<main>
-<header><div class="logo">₹</div><div><h1>Tuition Fee Tracker</h1><div class="sub">বার্ষিক টিউশন ফি হিসাব · ২০২৬</div></div></header>
-<section class="summary">
- <div class="stat"><b id="paidCount">0</b><span>Paid</span></div>
- <div class="stat"><b id="pendingCount">72</b><span>Pending</span></div>
- <div class="stat"><b>72</b><span>Total</span></div>
-</section>
-<div class="table-wrap"><table><thead><tr><th>Subject / Month</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead><tbody id="rows"></tbody></table></div>
-<div class="legend">🟢 সবুজ গোল = টাকা দেওয়া হয়েছে · ফাঁকা গোল = বাকি</div>
-<div class="actions"><button class="action" id="reset">সব হিসাব Reset</button><button class="action" id="install" hidden>Install App</button></div>
-<p class="note">তোমার পেমেন্টের চিহ্ন এই ডিভাইসেই সেভ থাকবে। ব্রাউজারের Site data মুছে ফেললে হিসাবও মুছে যেতে পারে।</p>
-</main>
-<dialog id="confirm"><h2>পেমেন্ট Cancel করবে?</h2><p id="confirmText">এই মাসের Paid চিহ্ন সরিয়ে দেওয়া হবে। তুমি কি নিশ্চিত?</p><div class="dlg-actions"><button class="cancel" id="yesCancel">হ্যাঁ, Cancel</button><button class="keep" id="noCancel">না, Paid রাখো</button></div></dialog>
-<dialog id="resetConfirm"><h2>সব হিসাব মুছে ফেলবে?</h2><p>সব ৭২টি ঘর আবার ফাঁকা হয়ে যাবে। এই কাজটি ফিরিয়ে আনা যাবে না।</p><div class="dlg-actions"><button class="cancel" id="yesReset">Reset</button><button class="keep" id="noReset">ফিরে যাও</button></div></dialog>
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10251c"><title>Tuition Fee Tracker</title><link rel="manifest" href="manifest.webmanifest"><style>
+:root{color-scheme:dark;--bg:#0c1511;--panel:#17231c;--line:#304238;--muted:#a9b8ae;--green:#16a34a;--text:#f2f7f3}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}main{max-width:980px;margin:auto;padding:18px 0 30px}header{display:flex;align-items:center;gap:12px;margin:8px 2px 18px}.logo{width:48px;height:48px;border-radius:15px;background:#1c5735;display:grid;place-items:center;font-size:25px}h1{font-size:21px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:3px}.menu-wrap{margin-left:auto;position:relative}summary{list-style:none;cursor:pointer;font-size:26px;padding:5px 10px;border:1px solid var(--line);border-radius:11px}summary::-webkit-details-marker{display:none}.menu{position:absolute;right:0;top:45px;z-index:5;width:210px;background:#203027;border:1px solid var(--line);border-radius:13px;padding:7px;box-shadow:0 10px 30px #0008}.menu button{width:100%;text-align:left;background:transparent;color:var(--text);border:0;padding:12px;border-radius:8px;font-size:14px}.yearbar{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);padding:11px;border-radius:14px;margin-bottom:13px;flex-wrap:wrap}.yearbar label{font-size:13px;color:var(--muted)}select,input{background:#24352a;color:var(--text);border:1px solid #526357;border-radius:9px;padding:9px;font:inherit}.yearbar select{flex:1;min-width:120px}.smallbtn{background:#244d34;color:white;border:0;border-radius:9px;padding:10px 12px;font-weight:600}.summary{display:flex;gap:10px;margin-bottom:14px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;flex:1}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:15px;background:var(--panel)}table{border-collapse:separate;border-spacing:0;min-width:790px;width:100%}th,td{padding:9px 5px;text-align:center;border-bottom:1px solid #2b3a31}th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#1b2a21}th:first-child,td:first-child{position:sticky;left:0;background:#1b2a21;text-align:left;padding-left:12px;min-width:112px;font-weight:600}td:first-child{background:var(--panel);font-size:13px}tr:last-child td{border-bottom:0}.dot{width:29px;height:29px;border-radius:50%;border:1.5px solid #819087;background:transparent;display:inline-grid;place-items:center;cursor:pointer;padding:0;color:white;font-size:17px}.dot.paid{background:var(--green);border-color:var(--green)}.legend,.note{font-size:12px;color:var(--muted);line-height:1.5;margin:12px 3px}.action{border:1px solid var(--line);background:#202e25;color:var(--text);border-radius:12px;padding:11px 14px;font-weight:600}dialog{background:#1a2920;color:var(--text);border:1px solid #526357;border-radius:18px;width:min(92vw,390px);padding:20px}dialog::backdrop{background:#0009}dialog h2{font-size:18px;margin:0 0 10px}dialog p{color:#c4d0c8;font-size:14px;line-height:1.5}.dlg-actions{display:flex;gap:8px;margin-top:18px}.dlg-actions button{flex:1;border:0;border-radius:11px;padding:11px;font-weight:700}.danger{background:#b42318;color:white}.keep{background:#dce8df;color:#142018}.field{display:grid;gap:6px;margin:12px 0;font-size:13px;color:var(--muted)}
+</style></head><body><main>
+<header><div class="logo">₹</div><div><h1>Tuition Fee Tracker</h1><div class="sub">বার্ষিক টিউশন ফি হিসাব</div></div><details class="menu-wrap"><summary>⋮</summary><div class="menu"><button id="menuYears">📅 Year Management</button><button id="menuAbout">ⓘ App Information</button></div></details></header>
+<section class="yearbar"><label for="yearSelect">Academic Year</label><select id="yearSelect"></select><button class="smallbtn" id="addYear">+ New Year</button></section>
+<section class="summary"><div class="stat"><b id="paidCount">0</b><span>Paid</span></div><div class="stat"><b id="pendingCount">72</b><span>Pending</span></div><div class="stat"><b>72</b><span>Total</span></div></section>
+<div class="table-wrap"><table><thead><tr><th>Subject / Month</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr></thead><tbody id="rows"></tbody></table></div><div class="legend">🟢 সবুজ গোল = টাকা দেওয়া হয়েছে · ফাঁকা গোল = বাকি</div><button class="action" id="reset">এই বছরের হিসাব Reset</button><p class="note">প্রতিটি বছরের হিসাব আলাদা করে এই ডিভাইসে সেভ থাকবে। Browser data মুছে গেলে হিসাব হারাতে পারে—গুরুত্বপূর্ণ হিসাবের ব্যাকআপ রাখবে।</p></main>
+<dialog id="confirm"><h2>পেমেন্ট Cancel করবে?</h2><p id="confirmText"></p><div class="dlg-actions"><button class="danger" id="yesCancel">হ্যাঁ, Cancel</button><button class="keep" id="noCancel">না, Paid রাখো</button></div></dialog>
+<dialog id="resetConfirm"><h2>এই বছরের সব হিসাব মুছবে?</h2><p>শুধু নির্বাচিত বছরের হিসাব ফাঁকা হবে। অন্য বছরের হিসাব থাকবে।</p><div class="dlg-actions"><button class="danger" id="yesReset">Reset</button><button class="keep" id="noReset">ফিরে যাও</button></div></dialog>
+<dialog id="yearDialog"><h2>নতুন শিক্ষাবর্ষ যোগ করো</h2><p>নতুন বছরের জন্য আলাদা খালি চার্ট হবে। আগের বছরের হিসাব থাকবে।</p><label class="field">Year (যেমন 2027)<input id="newYearInput" type="number" min="2000" max="2100" placeholder="2027"></label><div class="dlg-actions"><button class="keep" id="cancelYear">Cancel</button><button class="smallbtn" id="saveYear">Create Year</button></div></dialog>
+<dialog id="aboutDialog"><h2>App Information</h2><p><b>App Name:</b> Tuition Fee Tracker<br><b>Created By:</b> Dhiraj Sarkar<br><b>App Type:</b> Education & Fee Management<br><b>Version:</b> 2.0<br><b>Created Year:</b> 2026<br><b>Purpose:</b> Monthly tuition fee tracking</p><div class="dlg-actions"><button class="keep" id="closeAbout">Close</button></div></dialog>
 <script>
-const subjects=["Bengali","English","Physics","Chemistry","Mathematics","Biology"];
-const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const KEY="tuition-fee-tracker-2026-v1";
-let paid={}; try{paid=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){paid={}}
-let pendingKey=null;
-const rows=document.getElementById("rows");
-function save(){localStorage.setItem(KEY,JSON.stringify(paid));renderStats()}
-function renderStats(){const n=Object.values(paid).filter(Boolean).length;document.getElementById("paidCount").textContent=n;document.getElementById("pendingCount").textContent=72-n}
-function render(){
- rows.innerHTML="";
- subjects.forEach(s=>{const tr=document.createElement("tr");const name=document.createElement("td");name.textContent=s;tr.appendChild(name);
- months.forEach(m=>{const td=document.createElement("td");const key=s+"-"+m;const b=document.createElement("button");b.className="dot"+(paid[key]?" paid":"");b.type="button";b.setAttribute("aria-label",s+" "+m+(paid[key]?" Paid":" Unpaid"));b.textContent=paid[key]?"✓":"";b.addEventListener("click",()=>{if(paid[key]){pendingKey=key;document.getElementById("confirmText").textContent=s+" — "+m+" মাসের Paid চিহ্ন সরিয়ে দেওয়া হবে। তুমি কি নিশ্চিত?";document.getElementById("confirm").showModal()}else{paid[key]=true;save();render()}});td.appendChild(b);tr.appendChild(td)});rows.appendChild(tr)});
- renderStats();
-}
-document.getElementById("yesCancel").onclick=()=>{if(pendingKey){paid[pendingKey]=false;save();render();pendingKey=null}document.getElementById("confirm").close()};
-document.getElementById("noCancel").onclick=()=>{pendingKey=null;document.getElementById("confirm").close()};
-document.getElementById("reset").onclick=()=>document.getElementById("resetConfirm").showModal();
-document.getElementById("yesReset").onclick=()=>{paid={};save();render();document.getElementById("resetConfirm").close()};
-document.getElementById("noReset").onclick=()=>document.getElementById("resetConfirm").close();
-render();
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
-let deferredPrompt;const installBtn=document.getElementById("install");
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
-installBtn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.hidden=true});
-</script>
-</body></html>
+const subjects=["Bengali","English","Physics","Chemistry","Mathematics","Biology"],months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],STORE="tuition-fee-tracker-years-v2",OLD="tuition-fee-tracker-2026-v1";
+let db={};try{db=JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){}if(!db.years)db.years={};if(!db.years["2026"]){try{db.years["2026"]=JSON.parse(localStorage.getItem(OLD)||"{}")}catch(e){db.years["2026"]={}}}db.current=db.current||"2026";let pendingKey=null;const $=id=>document.getElementById(id),rows=$("rows");
+function save(){localStorage.setItem(STORE,JSON.stringify(db))}function data(){return db.years[db.current]||(db.years[db.current]={})}
+function stats(){let n=Object.values(data()).filter(Boolean).length;$("paidCount").textContent=n;$("pendingCount").textContent=72-n}
+function years(){let ys=Object.keys(db.years).sort((a,b)=>Number(b)-Number(a));$("yearSelect").innerHTML=ys.map(y=>`<option value="${y}">${y}</option>`).join("");$("yearSelect").value=db.current}
+function render(){rows.innerHTML="";subjects.forEach(s=>{let tr=document.createElement("tr"),td0=document.createElement("td");td0.textContent=s;tr.appendChild(td0);months.forEach(m=>{let td=document.createElement("td"),k=s+"-"+m,b=document.createElement("button");b.className="dot"+(data()[k]?" paid":"");b.textContent=data()[k]?"✓":"";b.onclick=()=>{if(data()[k]){pendingKey=k;$("confirmText").textContent=s+" — "+m+" মাসের Paid চিহ্ন সরানো হবে। তুমি কি নিশ্চিত?";$("confirm").showModal()}else{data()[k]=true;save();render()}};td.appendChild(b);tr.appendChild(td)});rows.appendChild(tr)});stats();years()}
+$("yesCancel").onclick=()=>{if(pendingKey){data()[pendingKey]=false;save();render();pendingKey=null}$("confirm").close()};$("noCancel").onclick=()=>{$("confirm").close();pendingKey=null};
+$("yearSelect").onchange=e=>{db.current=e.target.value;save();render()};$("addYear").onclick=()=>{$("newYearInput").value=String(Number(db.current)+1);$("yearDialog").showModal()};
+$("saveYear").onclick=()=>{let y=$("newYearInput").value.trim();if(!/^(20|21)\\d{2}$/.test(y)){alert("সঠিক চার অঙ্কের বছর লিখো।");return}if(!db.years[y])db.years[y]={};db.current=y;save();render();$("yearDialog").close()};$("cancelYear").onclick=()=>$("yearDialog").close();
+$("reset").onclick=()=>$("resetConfirm").showModal();$("yesReset").onclick=()=>{db.years[db.current]={};save();render();$("resetConfirm").close()};$("noReset").onclick=()=>$("resetConfirm").close();
+$("menuYears").onclick=()=>{document.querySelector(".menu-wrap").open=false;$("yearDialog").showModal()};$("menuAbout").onclick=()=>{document.querySelector(".menu-wrap").open=false;$("aboutDialog").showModal()};$("closeAbout").onclick=()=>$("aboutDialog").close();render();
+if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
